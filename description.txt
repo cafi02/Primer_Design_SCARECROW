@@ -1,0 +1,18 @@
+Project Suggestion 3:
+
+Primer design SCARESCROW
+For a PCR experiment on SCARECROW genes in the plant Arabidopsis thaliana, you must design the primers.
+Find all genes annotated as SCARECROW and SCARECROW-LIKE in the Arabidopsis genome and obtain the cDNA sequences
+(https://www.arabidopsis.org). Write a python script that designs a forward and reverse primer for each gene.
+Take into account that …
+
+(a) The primers have to be between 20-23 nucleotides long,
+(b) Forward and reverse primer melting temperatures should be between 55°C and 62°C and not diverge more than 4°C for
+    each other. Google an appropriate formula to calculate the melting temperature or use the formula we used in the course.
+(c) The primers should cover the start codon ATG with the forward primer and Stop Codon (TAG, TGA or TAA; reverse primer).
+(d) Reverse primers should be reverse complemented.
+
+This means if the sequence at the end of the gene looks like this: ATC GGA TAG
+The reverse complement is: CTA TCC GAT
+Print the primers to the screen.
+

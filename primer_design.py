@@ -36,6 +36,14 @@ def input_default(prompt, default):
         user_input = str(default)
     return user_input
 
+def gc_content(seq):
+    """Calculates the percentage of "C" and "G" in a given DNA or RNA sequence."""
+    seq = seq.upper()
+    gc_count = seq.count('C') + seq.count('G')
+    percentage = gc_count / len(seq) * 100
+    return round(percentage,2)
+
+
 def print_append(holo, s):
     print(s)
     holo += "\n" + s
@@ -139,7 +147,7 @@ for ncbi_id in gene_list:
     r = {}
     for i in range(min_len, max_len):
         forward = sequence[start:start + i]  # 5' --> 3' direction
-        reverse = sequence[stop - i:stop].translate(str.maketrans("ATCG", "TAGC"))  # 3' --> 5' direction
+        reverse = sequence[stop - i:stop][::-1].translate(str.maketrans("ATCG", "TAGC"))  # 3' --> 5' direction
 
         f[forward] = calculate_annealing_temp(forward)
         r[reverse] = calculate_annealing_temp(reverse)
@@ -186,8 +194,8 @@ for ncbi_id in gene_list:
         export = print_append(export, f"This primer pair for {gene_info[:gene_info.find(' ')]} checks all predefined criteria:")
 
     # Print best primer pair matches
-    export = print_append(export, f"FORWARD primer: 5'-{min_seq_f}-3' \t({f[min_seq_f]:.2f}°C)")
-    export = print_append(export, f"REVERSE primer: 3'-{min_seq_r}-5' \t({r[min_seq_r]:.2f}°C)")
+    export = print_append(export, f"FORWARD primer: 5'-{min_seq_f}-3' \t({f[min_seq_f]:.2f}°C, GC-content: {gc_content(min_seq_f)} %)")
+    export = print_append(export, f"REVERSE primer: 5'-{min_seq_r}-3' \t({r[min_seq_r]:.2f}°C, GC-content: {gc_content(min_seq_r)} %)")
     export = print_append(export, f"Difference in annealing Temperature: \t{min_diff}°C\n")
 
 # ==================================================EXPORT PRIMERS======================================================

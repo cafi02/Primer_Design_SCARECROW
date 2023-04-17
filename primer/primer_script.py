@@ -18,24 +18,7 @@ def separate_codons(sequence):
     codon_seq = ""
     for i in range(0, len(sequence), 3):
         codon_seq += sequence[i:i + 3] + " "
-    print(codon_seq.strip())
-
-def create_complement(seq):
-    """This function creates the complementary strand in 3'-5' direction of a nucleotide sequence given in 5'-3'.
-    The function is not case sensitive and will return the complementary sequence in all uppercase characters."""
-    seq = seq.upper() # set all nucleotides to uppercase
-    complement = "" # create an empty complementary strand in
-    for nt in seq:
-        if nt == "A":
-            complement += "T"
-        elif nt == "T":
-            complement += "A"
-        elif nt == "C":
-            complement += "G"
-        elif nt == "G":
-            complement += "C"
-        else:
-            print("Check your input sequence")
+    return codon_seq.strip()
 
 def calculate_annealing_temp(seq):
     """This function calculates the annealing temperature between two complementary nucleotide strands."""
@@ -114,7 +97,7 @@ export = "Primer Design\n" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M") 
          "\n______________________________________________________________________" + "\nDesign-Criteria:\n"
 
 # Define the parameters for the primer design
-min_len = int(input_default("Enter min. primer length (ex. 20): ", 20))
+min_len = int(input_default("\nEnter min. primer length (ex. 20): ", 20))
 max_len = int(input_default("Enter max. primer length (ex. 23): ", 23))
 export += f"Range of primer length:\tmin. {min_len}, max. {max_len}\n"
 
@@ -174,6 +157,7 @@ for ncbi_id in gene_list:
                 min_seq_r = seq_r
 
     export = print_append(export, f'\n{gene_info}')
+    export = print_append(export, f"Coding region: 5'-{separate_codons(sequence[start:stop])}-3'\n")
 
     # Check predefined criteria
     criteria_checked = True
@@ -183,11 +167,11 @@ for ncbi_id in gene_list:
         criteria_checked = False
     elif min_temp >= f[min_seq_f] or f[min_seq_f] >= max_temp:
         export = print_append(export,
-            f"The annealing temperatures of the F primer for {gene_info[:gene_info.find(' ')]} is not within the predefined range.")
+            f"The annealing temperatures of the FORWARD primer for {gene_info[:gene_info.find(' ')]} is not within the predefined range.")
         criteria_checked = False
     elif min_temp >= r[min_seq_r] or r[min_seq_r] >= max_temp:
         export = print_append(export,
-            f"The annealing temperatures of the R primer for {gene_info[:gene_info.find(' ')]} is not within the predefined range.")
+            f"The annealing temperatures of the REVERSE primer for {gene_info[:gene_info.find(' ')]} is not within the predefined range.")
         criteria_checked = False
 
     if min_diff > tm_diff:
@@ -198,11 +182,11 @@ for ncbi_id in gene_list:
     if not criteria_checked:
         export = print_append(export, "This is the best match for the primer pair:")
     else:
-        export = print_append(export, "This primer pair checks all predefined criteria:")
+        export = print_append(export, f"This primer pair for {gene_info[:gene_info.find(' ')]} checks all predefined criteria:")
 
     # Print best primer pair matches
-    export = print_append(export, f"F primer: 5'-{min_seq_f}-3' \t({f[min_seq_f]:.2f}°C)")
-    export = print_append(export, f"R primer: 3'-{min_seq_r}-5' \t({r[min_seq_r]:.2f}°C)")
+    export = print_append(export, f"FORWARD primer: 5'-{min_seq_f}-3' \t({f[min_seq_f]:.2f}°C)")
+    export = print_append(export, f"REVERSE primer: 3'-{min_seq_r}-5' \t({r[min_seq_r]:.2f}°C)")
     export = print_append(export, f"Difference in annealing Temperature: \t{min_diff}°C\n")
 
 # ==================================================EXPORT PRIMERS======================================================
@@ -211,8 +195,9 @@ save_output = input("Do you want to save the output? (y/n): ")
 
 if save_output.lower() == "y":
     filename = "primers_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M") + ".txt"
-    with open(filename, "w") as f:
-        f.write(export)
+    f = open(filename, "w", encoding="utf-8")
+    f.write(export)
+    f.close()
     print(f"The output has been saved to {filename}.")
 else:
     print("The output has not been saved.")

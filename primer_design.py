@@ -140,17 +140,22 @@ for ncbi_id in gene_list:
         if sequence[start:].find(codon) != -1:
             stop_codon_pos = sequence[start:].find(codon)
             if stop_codon_pos % 3 == 0:
-                stop = start + stop_codon_pos + 3
+                stop = start + stop_codon_pos
 
     # Save different primers and their annealing temperatures in dictionaries
     f = {}
     r = {}
     for i in range(min_len, max_len):
-        forward = sequence[start:start + i]  # 5' --> 3' direction
-        reverse = sequence[stop - i:stop][::-1].translate(str.maketrans("ATCG", "TAGC"))  # 3' --> 5' direction
 
-        f[forward] = calculate_annealing_temp(forward)
-        r[reverse] = calculate_annealing_temp(reverse)
+        for pos in range(start-(i-3), start+1):
+            forward = sequence[pos:pos + i]  # 5' --> 3' direction
+            f[forward] = calculate_annealing_temp(forward)
+
+        for pos in range(stop-(i-3), stop+1):
+            reverse = sequence[pos:pos+i] # 3' --> 5' direction
+            reverse = reverse[::-1].translate(str.maketrans("ATCG", "TAGC"))  # 5' --> 3' direction
+            r[reverse] = calculate_annealing_temp(reverse)
+
 
     # Find primer pair with the minimal difference in annealing temperatures
     min_diff = None

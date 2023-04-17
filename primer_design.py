@@ -1,6 +1,7 @@
 """
-Script
-Carlotta Fiedler
+Python Script to Download Fasta Files of cDNA and Design Primers for the Coding Region
+Author: Carlotta Fiedler
+Last updated: 17.04.2023
 """
 # ==================================================IMPORT PACKAGES=====================================================
 

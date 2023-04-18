@@ -1,24 +1,26 @@
 # Primer_Design_SCARECROW
 
 
-# Description
+## Description
 This project is the examination project for the Linux and Python class for biologists.
 
 ---
 
-# Installation
+## Installation
 Clone this GitHub repository into your local compiler (PyCharm).
 
-## Libraries
+### Libraries
 This project uses Bio. Make sure this library are correctly installed in PyCharm in order to run the script.
 
-## Run
-*To run the code via the terminal, change the current directory to the one where the script is saved and run it by entering ```python primer_design.py```. You will then be asked to enter information via the terminal.
+### Run
+*To run the code via the terminal, change the current directory to the one where the script is saved and run it by entering
+```python primer_design.py```
+You will then be asked to enter information via the terminal.
 *To run the code via the PyCharm Console, click the "Run" button and emter the information via the console.
 
 ---
 
-# Application
+## Application
 *First, you will be asked to enter an email address which is required to access NCBI.
 
 ```
@@ -41,7 +43,7 @@ Enter max. annealing the temperature in °C (ex. 62.0):
 Enter max. difference in annealing temperatures between forward and reverse primers in °C (ex. 4.0): 
 ```
 
-## Results
+### Results
 The respective result for each given NCBI reference consits of:
 *Information on the gene
 *Coding Region
@@ -64,7 +66,7 @@ Difference in annealing Temperature: 	0°C
 
 ---
 	
-# Ideas to extend the project
+## Ideas to extend the project
 *include the GC-content in the predefined criteria
 *allow aimed point mutations in primer sequences via the console to increase or decrease the annealing temperature
 

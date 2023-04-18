@@ -38,10 +38,13 @@ def input_default(prompt, default):
 
 def gc_content(seq):
     """Calculates the percentage of "C" and "G" in a given DNA or RNA sequence."""
-    seq = seq.upper()
-    gc_count = seq.count('C') + seq.count('G')
-    percentage = gc_count / len(seq) * 100
-    return round(percentage,2)
+    if len(seq) != 0:
+        seq = seq.upper()
+        gc_count = seq.count('C') + seq.count('G')
+        percentage = gc_count / len(seq) * 100
+        return round(percentage,2)
+    else:
+        return None
 
 
 def print_append(holo, s):
@@ -52,11 +55,11 @@ def print_append(holo, s):
 # ==========================================DOWNLOAD FASTA FILES FROM NCBI==============================================
 
 # Enter email for NCBI access
-email = input_default("Please enter an email address: ", "c.fiedler02@stud.de")
+email = input_default("Please enter an email address: ", "example@email.de")
 
 # Access NCBI with the email
 try:
-    Entrez.email = email    # c.fiedler02@stud.uni-goettingen.de
+    Entrez.email = email
 except ValueError:
     print("Invalid email, please try again.")
 
@@ -171,7 +174,7 @@ for ncbi_id in gene_list:
                 min_seq_r = seq_r
 
     export = print_append(export, f'\n{gene_info}')
-    export = print_append(export, f"Coding region: 5'-{separate_codons(sequence[start:stop])}-3'\n")
+    export = print_append(export, f"Coding region: 5'-{separate_codons(sequence[start:stop+3])}-3'\n")
 
     # Check predefined criteria
     criteria_checked = True

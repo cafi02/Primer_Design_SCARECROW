@@ -2,8 +2,6 @@
 Examination project for the Linux and Python class for biologists
 
 # Description
-This project offers a web based seat reservation system for a plane with a database.
-The project is part of the course "Programmieren für Data Scientists: Python" and is mandatory to pass this course.
 
 ---
 

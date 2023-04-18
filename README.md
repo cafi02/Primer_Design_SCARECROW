@@ -1,7 +1,8 @@
 # Primer_Design_SCARECROW
-Examination project for the Linux and Python class for biologists
+
 
 # Description
+This project is the examination project for the Linux and Python class for biologists.
 
 ---
 

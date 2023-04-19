@@ -139,11 +139,21 @@ for ncbi_id in gene_list:
 
     # Find the stop codon
     stop = -1
-    for codon in ['TAG', 'TGA', 'TAA']:
-        if sequence[start:].find(codon) != -1:
-            stop_codon_pos = sequence[start:].find(codon)
-            if stop_codon_pos % 3 == 0:
-                stop = start + stop_codon_pos
+
+    for i in range(start, len(seq), 3):
+        if seq[i:i + 3] == 'TAG' or seq[i:i + 3] == 'TGA' or seq[i:i + 3] == 'TAA':
+            stop = i
+            break
+
+    coding = seq[start:stop + 3]
+
+
+    # stop = -1
+    # for codon in ['TAG', 'TGA', 'TAA']:
+    #     if sequence[start:].find(codon) != -1:
+    #         stop_codon_pos = sequence[start:].find(codon)
+    #         if stop_codon_pos % 3 == 0:
+    #             stop = start + stop_codon_pos
 
     # Save different primers and their annealing temperatures in dictionaries
     f = {}

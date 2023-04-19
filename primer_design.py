@@ -139,21 +139,13 @@ for ncbi_id in gene_list:
 
     # Find the stop codon
     stop = -1
-
-    for i in range(start, len(seq), 3):
-        if seq[i:i + 3] == 'TAG' or seq[i:i + 3] == 'TGA' or seq[i:i + 3] == 'TAA':
+    for i in range(start, len(sequence), 3):
+        if sequence[i:i + 3] == 'TAG' or sequence[i:i + 3] == 'TGA' or sequence[i:i + 3] == 'TAA':
             stop = i
             break
 
-    coding = seq[start:stop + 3]
-
-
-    # stop = -1
-    # for codon in ['TAG', 'TGA', 'TAA']:
-    #     if sequence[start:].find(codon) != -1:
-    #         stop_codon_pos = sequence[start:].find(codon)
-    #         if stop_codon_pos % 3 == 0:
-    #             stop = start + stop_codon_pos
+    # Define coding region
+    coding = sequence[start:stop + 3]
 
     # Save different primers and their annealing temperatures in dictionaries
     f = {}
@@ -161,11 +153,11 @@ for ncbi_id in gene_list:
     for i in range(min_len, max_len):
 
         for pos in range(start-(i-3), start+1):
-            forward = sequence[pos:pos + i]  # 5' --> 3' direction
+            forward = coding[pos:pos + i]  # 5' --> 3' direction
             f[forward] = calculate_annealing_temp(forward)
 
         for pos in range(stop-(i-3), stop+1):
-            reverse = sequence[pos:pos+i] # 3' --> 5' direction
+            reverse = coding[pos:pos+i] # 3' --> 5' direction
             reverse = reverse[::-1].translate(str.maketrans("ATCG", "TAGC"))  # 5' --> 3' direction
             r[reverse] = calculate_annealing_temp(reverse)
 
@@ -184,7 +176,7 @@ for ncbi_id in gene_list:
                 min_seq_r = seq_r
 
     export = print_append(export, f'\n{gene_info}')
-    export = print_append(export, f"Coding region: 5'-{separate_codons(sequence[start:stop+3])}-3'\n")
+    export = print_append(export, f"Coding region: 5'-{separate_codons(coding[start:stop+3])}-3'\n")
 
     # Check predefined criteria
     criteria_checked = True

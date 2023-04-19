@@ -134,16 +134,39 @@ for ncbi_id in gene_list:
     gene_info = content[:content.find("\n")]
     sequence = content[content.find("\n"):].replace("\n", "")
 
-    # Find the start codon
-    start = sequence.find('ATG')
+    # Find the coding region
+    begin, start, stop = 0, 0, len(sequence)
+    coding_region = ""
 
-    # Find the stop codon
-    stop = -1
-    for codon in ['TAG', 'TGA', 'TAA']:
-        if sequence[start:].find(codon) != -1:
-            stop_codon_pos = sequence[start:].find(codon)
-            if stop_codon_pos % 3 == 0:
-                stop = start + stop_codon_pos
+    for i in range(len(sequence)-3):
+        # Find start codon
+        if sequence[i:i+3] == 'ATG':
+            start = i
+            # Find stop codon in frame to the previous start codon
+            for j in range(start, len(sequence)-3):
+                if (j-start)%3 == 0 and sequence[j:j+3] in ['TAG', 'TGA', 'TAA']:
+                    stop = j
+        # Save the sequence between the start and stop as coding reqion if it is longer than the previously found region
+        if len(sequence[start:stop+3]) > len(coding_region):
+            coding_region = sequence[start:stop+3]
+
+
+    # while begin <= len(sequence)-3:
+    #
+    #     # Find the start codon
+    #     start = sequence[begin:].find('ATG') + begin
+    #
+    #     # Find the stop codon
+    #     stop = -1
+    #     for codon in ['TAG', 'TGA', 'TAA']:
+    #         if sequence[start:].find(codon) != -1:
+    #             stop_codon_pos = sequence[start:].find(codon)
+    #             if stop_codon_pos % 3 == 0:
+    #                 stop = start + stop_codon_pos
+    #
+    #     if len(sequence[start:stop]) > len(coding_region):
+    #         coding_region = sequence[start:stop]
+    #         begin = start
 
     # Save different primers and their annealing temperatures in dictionaries
     f = {}
@@ -151,11 +174,11 @@ for ncbi_id in gene_list:
     for i in range(min_len, max_len):
 
         for pos in range(start-(i-3), start+1):
-            forward = sequence[pos:pos + i]  # 5' --> 3' direction
+            forward = coding_region[pos:pos + i]  # 5' --> 3' direction
             f[forward] = calculate_annealing_temp(forward)
 
         for pos in range(stop-(i-3), stop+1):
-            reverse = sequence[pos:pos+i] # 3' --> 5' direction
+            reverse = coding_region[pos:pos+i] # 3' --> 5' direction
             reverse = reverse[::-1].translate(str.maketrans("ATCG", "TAGC"))  # 5' --> 3' direction
             r[reverse] = calculate_annealing_temp(reverse)
 
@@ -174,7 +197,7 @@ for ncbi_id in gene_list:
                 min_seq_r = seq_r
 
     export = print_append(export, f'\n{gene_info}')
-    export = print_append(export, f"Coding region: 5'-{separate_codons(sequence[start:stop+3])}-3'\n")
+    export = print_append(export, f"Coding region: 5'-{separate_codons(coding_region[start:stop+3])}-3'\n")
 
     # Check predefined criteria
     criteria_checked = True

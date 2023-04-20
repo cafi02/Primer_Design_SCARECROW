@@ -90,6 +90,9 @@ Followed by:
 ```
 This is the best match for the primer pair:
 ```
+---
+## Export Data
+In the end the user is asked whether they want to save the generated output. If not (```n```) the program ends. If yes (```y```) the output is written and saved in a newly generated .txt file, which name contains the current date and time, in the current directory.
 
 ---
 	

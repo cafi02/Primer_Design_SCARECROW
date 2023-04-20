@@ -186,33 +186,19 @@ for ncbi_id in gene_list:
             r[reverse] = calculate_annealing_temp(reverse)
 
 
-    # Find primer pair with the minimal difference in annealing temperatures
-
-    # min_diff = None
-    # seq_f = None
-    # seq_r = None
-    #
-    # for seq_f, temp_f in f.items():
-    #     for seq_r, temp_r in r.items():
-    #         diff = abs(temp_f - temp_r)
-    #         if min_diff is None or diff < min_diff:
-    #             min_diff = diff
-    #             min_seq_f = seq_f
-    #             min_seq_r = seq_r
-
-
-
+    # Initialize forward and reverse primers with minimal difference in annealing temperatures and the difference itself
     min_seq_r = None
     min_seq_f = None
     min_diff = float('inf')
 
+    # Find the primer pair with the minimal temperature difference with both temperatures within the predefined range
     for seq_r, temp_r in r.items():
         for seq_f, temp_f in f.items():
             diff = abs(temp_r - temp_f)
             if diff < min_diff and (min_temp <= temp_r <= max_temp or min_temp <= temp_f <= max_temp):
                 min_seq_r, min_seq_f, min_diff = seq_r, seq_f, diff
 
-
+    # Find the primer pair with the minimal difference with temperatures outside the range if no primer pair was found
     if not min_seq_r and not min_seq_f:
         for seq_r, temp_r in r.items():
             for seq_f, temp_f in f.items():

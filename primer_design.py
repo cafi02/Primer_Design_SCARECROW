@@ -104,6 +104,8 @@ for ncbi_id in gene_list:
 
 # ==================================================DESIGN PRIMERS======================================================
 
+# ---------------------------------------------Define Design Criteria---------------------------------------------------
+
 # Create an export string to save the generated primers in the end
 export = "Primer Design\n" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M") +\
          "\n______________________________________________________________________" + "\nDesign-Criteria:\n"
@@ -122,9 +124,12 @@ tm_diff = float(input_default(
 export += f"Maximal difference in annealing temperatures:\t{tm_diff} °C\n" + \
           "______________________________________________________________________"
 
+# -------------------------------------Iterate over NCBI-IDs to Perform Primer Design-----------------------------------
+
 # Read content from fasta files, extract coding regions and design primers
 for ncbi_id in gene_list:
 
+    # ------------------------------------Read Gene-Info and Sequence from file-----------------------------------------
     # Read content from file
     f = open(f"{ncbi_id}.fasta")
     content = f.read()
@@ -134,51 +139,49 @@ for ncbi_id in gene_list:
     gene_info = content[:content.find("\n")]
     sequence = content[content.find("\n"):].replace("\n", "")
 
-    # Find the coding region
-    begin, start, stop = 0, 0, len(sequence)
-    coding_region = ""
 
-    for i in range(len(sequence)-3):
-        # Find start codon
-        if sequence[i:i+3] == 'ATG':
-            start = i
-            # Find stop codon in frame to the previous start codon
-            for j in range(start, len(sequence)-3):
-                if (j-start)%3 == 0 and sequence[j:j+3] in ['TAG', 'TGA', 'TAA']:
-                    stop = j
-        # Save the sequence between the start and stop as coding reqion if it is longer than the previously found region
-        if len(sequence[start:stop+3]) > len(coding_region):
-            coding_region = sequence[start:stop+3]
+    # -------------------------------------------Find the Coding Region-------------------------------------------------
+    # Initialize variables to find the longest coding region in the sequence
+    longest_coding_region = ""
+    longest_start = 0
+    longest_stop = 0
 
+    # Iterate through the sequence
+    i = 0
+    while i < len(sequence):
+        # Check for the start codon
+        if sequence[i:i + 3] == "ATG":
+            # If start codon is present, check for the next stop codon in frame
+            j = i + 3
+            while j < len(sequence):
+                # If a stop codon is found, check whether the coding region is longer than the previous and then save it
+                codon = sequence[j:j + 3]
+                if codon in ["TAG", "TGA", "TAA"] and (j - i) % 3 == 0:
+                    coding_region = sequence[i:j + 3]
+                    if len(coding_region) > len(longest_coding_region):
+                        longest_coding_region = coding_region
+                        longest_start = i
+                        longest_stop = j + 2
+                    break
+                j += 3
+            i = j + 3
+        else:
+            i += 3
 
-    # while begin <= len(sequence)-3:
-    #
-    #     # Find the start codon
-    #     start = sequence[begin:].find('ATG') + begin
-    #
-    #     # Find the stop codon
-    #     stop = -1
-    #     for codon in ['TAG', 'TGA', 'TAA']:
-    #         if sequence[start:].find(codon) != -1:
-    #             stop_codon_pos = sequence[start:].find(codon)
-    #             if stop_codon_pos % 3 == 0:
-    #                 stop = start + stop_codon_pos
-    #
-    #     if len(sequence[start:stop]) > len(coding_region):
-    #         coding_region = sequence[start:stop]
-    #         begin = start
+    coding, start, stop = longest_coding_region, longest_start, longest_stop
 
+    # -----Create all possible Primers and Find the Pair with the smallest Difference in Annealing Temperatures---------
     # Save different primers and their annealing temperatures in dictionaries
     f = {}
     r = {}
     for i in range(min_len, max_len):
 
         for pos in range(start-(i-3), start+1):
-            forward = coding_region[pos:pos + i]  # 5' --> 3' direction
+            forward = sequence[pos:pos + i]  # 5' --> 3' direction
             f[forward] = calculate_annealing_temp(forward)
 
         for pos in range(stop-(i-3), stop+1):
-            reverse = coding_region[pos:pos+i] # 3' --> 5' direction
+            reverse = sequence[pos:pos+i] # 3' --> 5' direction
             reverse = reverse[::-1].translate(str.maketrans("ATCG", "TAGC"))  # 5' --> 3' direction
             r[reverse] = calculate_annealing_temp(reverse)
 
@@ -196,8 +199,9 @@ for ncbi_id in gene_list:
                 min_seq_f = seq_f
                 min_seq_r = seq_r
 
+    # -----------------------------------------Print Results and Comments-----------------------------------------------
     export = print_append(export, f'\n{gene_info}')
-    export = print_append(export, f"Coding region: 5'-{separate_codons(coding_region[start:stop+3])}-3'\n")
+    export = print_append(export, f"Coding region: 5'-{separate_codons(coding)}-3'\n")
 
     # Check predefined criteria
     criteria_checked = True

@@ -4,17 +4,26 @@
 ## Description
 This project is the examination project for the Linux and Python class for biologists.
 
+### Files
+* ```description.txt```	contains the project description and the criteria that the programm respectively the primers must fulfill.
+* ```primer_design.py``` contains the script.
+
+There is an example provided to see how the code works:
+* ```SCR_SCL_genes_ncbi_ex.txt``` contains a list of SCARECROW and SCARECROW-Like genes in the plant Arabidopsis thaliana and their NCBI-IDs that the program asks to enter via the console as theiy are required to access the correct FASTA files.
+* ```SCR_SCL_primer_ex.txt``` contains the saved output of the program when all listed NCBI-IDs of the SCARECROW and SCARECROW-Like genes were entered.
+
+
 ---
 
 ## Installation
 Clone this GitHub repository into your local compiler (PyCharm).
 
 ### Libraries
-This project uses Bio. Make sure this library are correctly installed in PyCharm in order to run the script.
+This project uses Bio to download FASTA files from NCBI. Make sure this library are installed correctly in PyCharm to run the script.
 
 ### Run
 * To run the code via the terminal, change the current directory to the one where the script is saved and run it by entering ```python primer_design.py```. You will then be asked to enter information via the terminal.
-* To run the code via the PyCharm Console, click the "Run" button and emter the information via the console.
+* To run the code via the PyCharm Console, click the "Run" button and enter the information via the console.
 
 ---
 
@@ -25,7 +34,7 @@ This project uses Bio. Make sure this library are correctly installed in PyCharm
 Please enter an email address: 
 ```
 
-* Second, you will be asked to enter one or multiple NCBI Reference Sequence for the gene(s) the primers should be designed for. If not already downloaded, this program will download the FASTA files for the given NCBI references and save it in the current directory automatically.
+* Second, you will be asked to enter one or multiple NCBI Reference Sequence for the gene(s) the primers should be designed for. If not already downloaded, this program will download the FASTA files for the given NCBI references and save it in the current directory automatically (... this might take a while).
 
 ```
 Please enter one or multiple (comma-seperated) NCBI Reference Sequence (ex. NM_115282.4, NM_103925.6): 
@@ -60,7 +69,27 @@ REVERSE primer: 5'-AAATGGGAAGAGATTAGGTG-3' 	(56.00°C, GC-content: 40.0 %)
 Difference in annealing Temperature: 	0°C
 ```
 ### Unmatched Design Criteria
-
+If the predefined criteria cannot be matched, the output will contain a comment on what criteria is not fulfilled and the best found primer pair is printed.
+For example:
+```
+The annealing temperatures of both primers for >NM_115282.4 are not within the predefined range.
+``` 
+or
+```
+The annealing temperatures of the FORWARD primer for >NM_115282.4 is not within the predefined range.
+``` 
+or
+```
+The annealing temperatures of the REVERSE primer for >NM_115282.4 is not within the predefined range.
+``` 
+or
+```
+The difference in annealing temperatures of the primers for >NM_115282.4 exceeds the predefined maximum.
+``` 
+Followed by:
+```
+This is the best match for the primer pair:
+```
 
 ---
 	

@@ -187,17 +187,38 @@ for ncbi_id in gene_list:
 
 
     # Find primer pair with the minimal difference in annealing temperatures
-    min_diff = None
-    min_seq_f = None
-    min_seq_r = None
 
-    for seq_f, temp_f in f.items():
+    # min_diff = None
+    # seq_f = None
+    # seq_r = None
+    #
+    # for seq_f, temp_f in f.items():
+    #     for seq_r, temp_r in r.items():
+    #         diff = abs(temp_f - temp_r)
+    #         if min_diff is None or diff < min_diff:
+    #             min_diff = diff
+    #             min_seq_f = seq_f
+    #             min_seq_r = seq_r
+
+
+
+    min_seq_r = None
+    min_seq_f = None
+    min_diff = float('inf')
+
+    for seq_r, temp_r in r.items():
+        for seq_f, temp_f in f.items():
+            diff = abs(temp_r - temp_f)
+            if diff < min_diff and (min_temp <= temp_r <= max_temp or min_temp <= temp_f <= max_temp):
+                min_seq_r, min_seq_f, min_diff = seq_r, seq_f, diff
+
+
+    if not min_seq_r and not min_seq_f:
         for seq_r, temp_r in r.items():
-            diff = abs(temp_f - temp_r)
-            if min_diff is None or diff < min_diff:
-                min_diff = diff
-                min_seq_f = seq_f
-                min_seq_r = seq_r
+            for seq_f, temp_f in f.items():
+                diff = abs(temp_r - temp_f)
+                if diff < min_diff:
+                    min_seq_r, min_seq_f, min_diff = seq_r, seq_f, diff
 
     # -----------------------------------------Print Results and Comments-----------------------------------------------
     export = print_append(export, f'\n{gene_info}')
@@ -205,15 +226,15 @@ for ncbi_id in gene_list:
 
     # Check predefined criteria
     criteria_checked = True
-    if min_temp >= f[min_seq_f] or f[min_seq_f] >= max_temp and min_temp >= r[min_seq_r] or r[min_seq_r] >= max_temp:
+    if min_temp > f[min_seq_f] or f[min_seq_f] > max_temp and min_temp > r[min_seq_r] or r[min_seq_r] > max_temp:
         export = print_append(export,
             f"The annealing temperatures of both primers for {gene_info[:gene_info.find(' ')]} are not within the predefined range.")
         criteria_checked = False
-    elif min_temp >= f[min_seq_f] or f[min_seq_f] >= max_temp:
+    elif min_temp > f[min_seq_f] or f[min_seq_f] > max_temp:
         export = print_append(export,
             f"The annealing temperatures of the FORWARD primer for {gene_info[:gene_info.find(' ')]} is not within the predefined range.")
         criteria_checked = False
-    elif min_temp >= r[min_seq_r] or r[min_seq_r] >= max_temp:
+    elif min_temp > r[min_seq_r] or r[min_seq_r] > max_temp:
         export = print_append(export,
             f"The annealing temperatures of the REVERSE primer for {gene_info[:gene_info.find(' ')]} is not within the predefined range.")
         criteria_checked = False
